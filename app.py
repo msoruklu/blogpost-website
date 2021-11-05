@@ -1,4 +1,3 @@
-import re
 from flask import Flask, render_template, request,redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -11,18 +10,31 @@ db = SQLAlchemy(app)
 
 class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key = True)
+    author = db.Column(db.String(20),nullable = False, default = "N/A")
     title = db.Column(db.String(100), nullable = False)
     content = db.Column(db.Text, nullable = False)
-    author = db.Column(db.String(20),nullable = False, default = "N/A")
     date_posted = db.Column(db.DateTime, nullable = False, default = datetime.utcnow)
 
     def __repr__(self):
         return "Blog post " +str(self.id)
 
+class User(db.Model):
+    userid = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(20), nullable = False)
+    password = db.Column(db.String(50), nullable = False)
+    created_at = db.Column(db.DateTime, nullable = False, default = datetime.utcnow)
+
+    def __repr__(self):
+        return "User " +str(self.id)
+
 
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@app.route("/choice", methods = ["GET","POST"])
+def choice():
+    return render_template("choice.html")
 
 @app.route("/posts", methods = ["GET","POST"])
 def posts():
@@ -76,3 +88,4 @@ def delete(id):
 
 if __name__=="__main__":
     app.run(debug=True)
+
